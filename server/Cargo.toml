@@ -1,0 +1,20 @@
+[package]
+name = "actix-tf-server"
+version = "0.1.0"
+authors = ["kylekosic <kylekosic@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+actix-rt = "1.0"
+actix-web = { version="2.0", features=["openssl"] }
+anyhow = "1.0"
+base64 = "0.12"
+env_logger = "0.7"
+image = "0.23"
+serde = { version = "1.0", features = ["derive"] }
+structopt = "0.3"
+
+[dependencies.tensorflow]
+# Using the git repo instead of crates.io, as it contains a needed bug fix
+git = "https://github.com/tensorflow/rust.git"
+features = ["experimental_training"]

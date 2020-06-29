@@ -1,0 +1,12 @@
+# MacOS cache
+.DS_Store
+
+# Python cache
+__pycache__
+
+# Editor settings
+.vscode
+.ipynb_checkpoints
+
+# Rust compilation targets
+server/target
