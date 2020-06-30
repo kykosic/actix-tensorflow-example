@@ -39,11 +39,16 @@ The server code is a rust crate located in `./server`. In order to run, the serv
 cd server
 cargo run -- --model-dir ../saved_model
 ```
-For deployment, you should compile the server first with:
+
+## Serving in Docker
+For actual deployments, you probably would want to build a release in a container to serve the API. To build the docker image:
 ```
-cargo build --release
+docker build -t actix-tf .
 ```
-This will output a binary to `server/target/release/actix-tf-server`.
+Then to run the image locally for testing:
+```
+docker run --rm -it -p 8080:8080 actix-tf
+```
 
 ## Client Testing
 With the server running locally, you can test inference using `./client/client.py`. Included is a PNG file with a handwritten "3" that is base64-encoded and submitted to the server.

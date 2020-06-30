@@ -15,6 +15,9 @@ struct Opt {
     /// Directory where TensorFlow model is saved
     #[structopt(short, long)]
     model_dir: String,
+    /// Port to serve on
+    #[structopt(short, long, default_value = "8080")]
+    port: u32,
 }
 
 #[derive(Debug, Deserialize)]
@@ -53,7 +56,7 @@ async fn main() -> std::io::Result<()> {
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?
     }));
 
-    let endpoint = "127.0.0.1:8080";
+    let endpoint = format!("0.0.0.0:{}", opt.port);
     println!("Running server at {}", endpoint);
     HttpServer::new(move || {
         App::new()
