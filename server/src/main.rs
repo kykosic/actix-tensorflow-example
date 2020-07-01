@@ -30,15 +30,13 @@ async fn predict_mnist(
     model: web::Data<Arc<Mutex<MnistModel>>>,
     data: web::Json<MnistRequest>,
 ) -> Result<HttpResponse, Error> {
-    let image_bytes =
-        base64::decode(&data.image).map_err(|e| HttpResponse::BadRequest().body(e.to_string()))?;
-    let input = MnistInput::from_image_bytes(image_bytes)
-        .map_err(|e| HttpResponse::InternalServerError().body(e.to_string()))?;
-    let res = model
-        .lock()
-        .unwrap()
-        .predict(input)
-        .map_err(|_| HttpResponse::InternalServerError())?;
+    let res = web::block(move || {
+        let image_bytes = base64::decode(&data.image)?;
+        let input = MnistInput::from_image_bytes(image_bytes)?;
+        model.lock().unwrap().predict(input)
+    })
+    .await
+    .map_err(|e| HttpResponse::InternalServerError().body(e.to_string()))?;
     Ok(HttpResponse::Ok()
         .content_type("application/json")
         .json(res))
