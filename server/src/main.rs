@@ -1,7 +1,7 @@
 mod mnist_model;
 use mnist_model::{MnistInput, MnistModel};
 
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 use actix_rt;
 use actix_web::{middleware, web, App, Error, HttpResponse, HttpServer};
@@ -27,13 +27,13 @@ struct MnistRequest {
 }
 
 async fn predict_mnist(
-    model: web::Data<Arc<Mutex<MnistModel>>>,
+    model: web::Data<Arc<MnistModel>>,
     data: web::Json<MnistRequest>,
 ) -> Result<HttpResponse, Error> {
     let res = web::block(move || {
         let image_bytes = base64::decode(&data.image)?;
         let input = MnistInput::from_image_bytes(image_bytes)?;
-        model.lock().unwrap().predict(input)
+        model.predict(input)
     })
     .await
     .map_err(|e| HttpResponse::InternalServerError().body(e.to_string()))?;
@@ -49,10 +49,10 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     println!("Loading saved model from {}", &opt.model_dir);
-    let model = Arc::new(Mutex::new({
+    let model = Arc::new({
         MnistModel::from_dir(&opt.model_dir)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))?
-    }));
+    });
 
     let endpoint = format!("0.0.0.0:{}", opt.port);
     println!("Running server at {}", endpoint);
