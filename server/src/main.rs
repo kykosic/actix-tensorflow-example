@@ -3,8 +3,7 @@ use mnist_model::{MnistInput, MnistModel};
 
 use std::sync::Arc;
 
-use actix_rt;
-use actix_web::{middleware, web, App, Error, HttpResponse, HttpServer};
+use actix_web::{middleware, post, web, App, Error, HttpResponse, HttpServer};
 use base64;
 use env_logger;
 use serde::Deserialize;
@@ -26,6 +25,7 @@ struct MnistRequest {
     image: String,
 }
 
+#[post("/mnist")]
 async fn predict_mnist(
     model: web::Data<Arc<MnistModel>>,
     data: web::Json<MnistRequest>,
@@ -42,7 +42,7 @@ async fn predict_mnist(
         .json(res))
 }
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let opt = Opt::from_args();
     std::env::set_var("RUST_LOG", "actix_web=info");
@@ -59,9 +59,8 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
-            .data(web::JsonConfig::default().limit(4096))
             .data(model.clone())
-            .service(web::resource("/mnist").route(web::post().to(predict_mnist)))
+            .service(predict_mnist)
     })
     .bind(endpoint)?
     .run()
