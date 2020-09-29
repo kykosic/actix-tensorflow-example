@@ -12,8 +12,5 @@ env_logger = "0.7"
 image = "0.23"
 serde = { version = "1.0", features = ["derive"] }
 structopt = "0.3"
+tensorflow = "0.16"
 
-[dependencies.tensorflow]
-# Using the git repo instead of crates.io, as it contains a needed bug fix
-git = "https://github.com/tensorflow/rust.git"
-features = ["experimental_training"]
