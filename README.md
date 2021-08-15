@@ -3,7 +3,7 @@
 This repository gives an example of training a machine learning model using TensorFlow2.0 Keras in python, exporting that model, then serving inference over a RESTful API using Actix-Web in rust.
 
 
-The motivation behind this example was to try out the [TensorFlow rust bindings](https://github.com/tensorflow/rust) in a simple, practical use case.
+The motivation behind this example was to try out the [TensorFlow rust bindings](https://github.com/tensorflow/rust) in a simple, practical use case. For the equivalent PyTorch example, see the [actix-pytorch-example repository](https://github.com/kykosic/actix-pytorch-example).
 
 
 For more information on the tools used, check out the following repositories:
